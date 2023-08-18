@@ -1,15 +1,12 @@
 #include <cs50.h>
 #include <string.h>
 #include <stdio.h>
-#include <stdbool.h>
 
 // Declare helper functions for compiler
 int c_to_i(char c);
 int sum_multiplied(char number[], int digit_count);
 int sum_non_multiplied(char number[], int digit_count);
-bool checksum(char number[], int digit_count);
-
-// Typecasting: https://www.geeksforgeeks.org/c-program-for-char-to-int-conversion
+int checksum(char number[], int digit_count);
 
 int main(void)
 {
@@ -21,21 +18,34 @@ int main(void)
     sprintf(digits, "%ld", n);
     int digit_count = strlen(digits);
 
-    // Print for testing
-    printf("%d\n", digit_count);
-    printf("%c\n", digits[0]);
-    printf("%d\n", (int) (digits[0]));
-    printf("%d\n", c_to_i(digits[0]));
-    printf("%d\n", sum_multiplied(digits, digit_count));
-    printf("%d\n", sum_non_multiplied(digits, digit_count));
-    printf("%d\n", checksum(digits, digit_count));
-
-    // If Amex (15 digits and starts with 34 or 37) or Mastercard (16 digits and starts with 51, 52, 53, 54, 55)
-    // or Visa (13 or 16 digits and starts with 4)
-        // Compute checksum
-            // If checksum last digit 0 -> VALID
-    // Else
-        // CARD NOT VALID
+    // If checksum last digit 0, then check if:
+    // Amex (15 digits and starts with 34 or 37)
+    // Mastercard (16 digits and starts with 51, 52, 53, 54, 55)
+    // Visa (13 or 16 digits and starts with 4)
+    // ELSE invalid
+    if (checksum(digits, digit_count) != 0)
+    {
+        if (digit_count == 15 && digits[0] == '3' && strchr("47", digits[1]) != NULL)
+        {
+            printf("AMEX\n");
+        }
+        else if (digit_count == 16 && digits[0] == '5' && strchr("12345", digits[1]) != NULL)
+        {
+            printf("MASTERCARD\n");
+        }
+        else if ((digit_count == 13 || digit_count == 16) && digits[0] == '4')
+        {
+            printf("VISA\n");
+        }
+        else
+        {
+            printf("INVALID\n");
+        }
+    }
+    else
+    {
+        printf("INVALID\n");
+    }
     return 0;
 }
 
@@ -69,10 +79,22 @@ int sum_non_multiplied(char number[], int digit_count)
     return sum_non_multiplied;
 }
 
-// Compute checksum - WIP to find out whether bool or int is better
-bool checksum(char number[], int digit_count)
+// Compute checksum
+int checksum(char number[], int digit_count)
 {
     int checksum = sum_multiplied(number, digit_count);
     checksum += sum_non_multiplied(number, digit_count);
     return (checksum % 10 == 0);
 }
+
+// SOURCES
+// Typecasting: https://www.geeksforgeeks.org/c-program-for-char-to-int-conversion
+
+// Testing
+    // printf("%d\n", digit_count);
+    // printf("%c\n", digits[0]);
+    // printf("%d\n", (int) (digits[0]));
+    // printf("%d\n", c_to_i(digits[0]));
+    // printf("%d\n", sum_multiplied(digits, digit_count));
+    // printf("%d\n", sum_non_multiplied(digits, digit_count));
+    // printf("%d\n", checksum(digits, digit_count));
